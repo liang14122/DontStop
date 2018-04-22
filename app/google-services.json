@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "547911220562",
+    "firebase_url": "https://dontstop-c58c8.firebaseio.com",
+    "project_id": "dontstop-c58c8",
+    "storage_bucket": "dontstop-c58c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547911220562:android:1d34fb9dbe2880ae",
+        "android_client_info": {
+          "package_name": "sg.edu.rp.c346.dontstop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547911220562-f45qf9baubepl2msah5sdshrts3gbat1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sg.edu.rp.c346.dontstop",
+            "certificate_hash": "bd6dabb0878b7dc177d7555e4204ee365fd8e8f9"
+          }
+        },
+        {
+          "client_id": "547911220562-b0tj4ibjqckaas0j1odrf50p1jjj8g3d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtx7hWgSaEAgbovqsiQ1jGdTn7dOgIMQ0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "547911220562-b0tj4ibjqckaas0j1odrf50p1jjj8g3d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

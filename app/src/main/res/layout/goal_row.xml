@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="110dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tvTargetAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_10000_steps_a_day"
+        android:textColor="#424242"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/chartToday"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="24dp"
+        />
+
+    <!--Oneday ImageView and textView-->
+    <TextView
+    android:id="@+id/tvOne"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/monday"
+    app:layout_constraintTop_toBottomOf="@+id/ivOne"
+    app:layout_constraintLeft_toLeftOf="parent"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="4dp"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/ivOne"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/monday"
+        android:src="@drawable/circle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTargetAmount"
+        android:layout_marginStart="16dp"/>
+
+    <!--Twosday ImageView and textView-->
+    <TextView
+        android:id="@+id/tvTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tue"
+        app:layout_constraintTop_toBottomOf="@+id/ivTwo"
+        app:layout_constraintLeft_toRightOf="@id/tvOne"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/ivTwo"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintLeft_toRightOf="@id/ivOne"
+        app:layout_constraintTop_toBottomOf="@+id/tvTargetAmount"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="9dp"
+        android:src="@drawable/circle"
+        android:contentDescription="@string/tue" />
+
+    <!--Twoday ImageView and textView-->
+    <TextView
+        android:id="@+id/tvThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wed"
+        app:layout_constraintTop_toBottomOf="@+id/ivThree"
+        app:layout_constraintLeft_toRightOf="@id/tvTwo"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/ivThree"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintLeft_toRightOf="@id/ivTwo"
+        app:layout_constraintTop_toBottomOf="@+id/tvTargetAmount"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="9dp"
+        android:src="@drawable/circle"
+        android:contentDescription="@string/wed" />
+
+    <!--Twoday ImageView and textView-->
+    <TextView
+        android:id="@+id/tvFour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/thur"
+        app:layout_constraintTop_toBottomOf="@+id/ivFour"
+        app:layout_constraintLeft_toRightOf="@id/tvThree"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/ivFour"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintLeft_toRightOf="@id/ivThree"
+        app:layout_constraintTop_toBottomOf="@+id/tvTargetAmount"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="9dp"
+        android:src="@drawable/circle"
+        android:contentDescription="@string/thur" />
+
+    <!--Five ImageView and textView-->
+    <TextView
+        android:id="@+id/tvFive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/fri"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@id/tvFour"
+        app:layout_constraintTop_toBottomOf="@+id/ivFive"
+        android:layout_marginStart="10dp"/>
+
+    <ImageView
+        android:id="@+id/ivFive"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintLeft_toRightOf="@id/ivFour"
+        app:layout_constraintTop_toBottomOf="@+id/tvTargetAmount"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="9dp"
+        android:src="@drawable/circle"
+        android:contentDescription="@string/thur" />
+
+    <!--Six ImageView and textView-->
+    <TextView
+        android:id="@+id/tvSix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sat"
+        app:layout_constraintTop_toBottomOf="@+id/ivSix"
+        app:layout_constraintLeft_toRightOf="@id/tvFive"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/ivSix"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintLeft_toRightOf="@id/ivFive"
+        app:layout_constraintTop_toBottomOf="@+id/tvTargetAmount"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="9dp"
+        android:src="@drawable/circle"
+        android:contentDescription="@string/sat" />
+
+    <!--Seven ImageView and textView-->
+    <TextView
+        android:id="@+id/tvSeven"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sun"
+        app:layout_constraintTop_toBottomOf="@+id/ivSeven"
+        app:layout_constraintLeft_toRightOf="@id/tvSix"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:id="@+id/ivSeven"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintLeft_toRightOf="@id/ivSix"
+        app:layout_constraintTop_toBottomOf="@+id/tvTargetAmount"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="9dp"
+        android:src="@drawable/circle"
+        android:contentDescription="@string/sun" />
+
+</android.support.constraint.ConstraintLayout>
