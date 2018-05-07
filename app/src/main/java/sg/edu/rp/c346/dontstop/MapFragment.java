@@ -225,11 +225,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
         if (myCurrent != null) {
             myCurrent.remove();
         }
+
         myCurrent = mGoogleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .title("Running from here"));
         myCurrent.showInfoWindow();
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15.01f));
+
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (marker.equals(myCurrent)){
+
+                    Intent i = new Intent(getActivity(), RecordingActivity.class);
+                    startActivity(i);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void startLocationUpdates() {

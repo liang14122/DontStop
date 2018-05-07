@@ -133,6 +133,7 @@ public class TodayStepService extends Service implements Handler.Callback {
         builder.setPriority(Notification.PRIORITY_MIN);
 
         String receiverName = getReceiver(getApplicationContext());
+        Logger.i("receiverNameTarget", receiverName);
         PendingIntent contentIntent = PendingIntent.getBroadcast(this, BROADCAST_REQUEST_CODE, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
         if (!TextUtils.isEmpty(receiverName)) {
             try {
@@ -182,8 +183,6 @@ public class TodayStepService extends Service implements Handler.Callback {
 
     private void startStepDetector() {
 
-//        getLock(this);
-
         //android4.4以后如果有stepcounter可以使用计步传感器
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && isStepCounter()) {
             addStepCounterListener();
@@ -195,7 +194,7 @@ public class TodayStepService extends Service implements Handler.Callback {
     private void addStepCounterListener() {
         Logger.e(TAG, "addStepCounterListener");
         if (null != stepCounter) {
-            Logger.e(TAG, "已经注册TYPE_STEP_COUNTER");
+            Logger.e(TAG, "TYPE_STEP_COUNTER Registered");
             CURRENT_SETP = stepCounter.getCurrentStep();
             updateNotification(CURRENT_SETP);
             return;
@@ -212,7 +211,7 @@ public class TodayStepService extends Service implements Handler.Callback {
     private void addBasePedoListener() {
         Logger.e(TAG, "addBasePedoListener");
         if (null != stepDetector) {
-            Logger.e(TAG, "已经注册TYPE_ACCELEROMETER");
+            Logger.e(TAG, "TYPE_ACCELEROMETER Registered");
             CURRENT_SETP = stepDetector.getCurrentStep();
             updateNotification(CURRENT_SETP);
             return;
@@ -315,7 +314,7 @@ public class TodayStepService extends Service implements Handler.Callback {
         builder.setContentTitle(getString(R.string.title_notification_bar, String.valueOf(stepCount)));
         String km = getDistanceByStep(stepCount);
         String calorie = getCalorieByStep(stepCount);
-        builder.setContentText(calorie + " 千卡  " + km + " 公里");
+        builder.setContentText(calorie + " Kcal  " + km + " Km");
         notification = builder.build();
         nm.notify(R.string.app_name, notification);
     }
@@ -353,12 +352,12 @@ public class TodayStepService extends Service implements Handler.Callback {
         private static final String CALORIE = "kaluli";
 
         @Override
-        public int getCurrentTimeSportStep() throws RemoteException {
+        public int getCurrentTimeSportStep() {
             return CURRENT_SETP;
         }
 
         @Override
-        public String getTodaySportStepArray() throws RemoteException {
+        public String getTodaySportStepArray() {
             if (null != mTodayStepDBHelper) {
                 List<TodayStepData> todayStepDataArrayList = mTodayStepDBHelper.getQueryAll();
                 if (null == todayStepDataArrayList || 0 == todayStepDataArrayList.size()) {

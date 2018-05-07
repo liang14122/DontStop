@@ -10,8 +10,10 @@ public class MyReceiver extends BaseClickBroadcast {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Intent mainIntent = new Intent(context,MainActivity.class);
+        Intent mainIntent = new Intent(context,HomeFragment.class);
         mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(mainIntent);
+
+
     }
 }

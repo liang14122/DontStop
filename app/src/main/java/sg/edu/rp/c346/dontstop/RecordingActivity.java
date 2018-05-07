@@ -20,10 +20,11 @@ public class RecordingActivity extends AppCompatActivity implements View.OnClick
     long milliSecondTime, startTime, TimeBuff, update=0L;
     Handler handler;
     private int second, mintues, hours, milliseconds;
-    SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-    Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
     int initialValue;
     int currentStep = 0;
+
+    SensorManager sensorManager;
+    Sensor stepSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,8 @@ public class RecordingActivity extends AppCompatActivity implements View.OnClick
         btnFinish.setOnClickListener(this);
         btnContinue.setOnClickListener(this);
 
-
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
     }
 
     @Override
@@ -75,11 +77,10 @@ public class RecordingActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void run() {
             milliSecondTime = SystemClock.uptimeMillis() - startTime;
-            update = TimeBuff + milliSecondTime;
-            second = (int)(update/100);
-            mintues = second/360;
-            second = second % 360;
-            second = second /10;
+            second = (int)(milliSecondTime/1000);
+            mintues = second/60;
+            hours = second/360;
+            second = second % 60;
 
             milliseconds = (int)update%100;
             tvTime.setText(String.format("%02d", hours) + ":" + String.format("%02d", mintues) + ":" + String.format("%02d", second));
