@@ -3,7 +3,7 @@ package sg.edu.rp.c346.dontstop;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;

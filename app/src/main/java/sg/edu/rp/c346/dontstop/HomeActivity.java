@@ -1,7 +1,7 @@
 package sg.edu.rp.c346.dontstop;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,7 +28,7 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Fragment fragment = new HomeFragment();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.drawer_fragment_container, fragment);
         ft.commit();
 
@@ -97,7 +97,7 @@ public class HomeActivity extends AppCompatActivity
                 break;
         }
         if (fragment != null){
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.drawer_fragment_container, fragment);
             ft.commit();
         }
