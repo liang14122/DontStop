@@ -56,7 +56,7 @@
     <string name="current_weight">Current Weight</string>
     <string name="current_height">Current Height</string>
     <string name="current_bmi">Current BMI</string>
-    <string name="standard_bmi">Standard BMI</string>
+    <string name="bmi_status">Current Status</string>
     <string name="title_activity_new_home">NewHomeActivity</string>
     <string name="home">Home</string>
     <string name="select_your_birthday">Select your Birthday</string>

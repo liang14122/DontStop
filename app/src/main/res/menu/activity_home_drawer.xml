@@ -21,10 +21,6 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/settings" />
         <item
-            android:id="@+id/nav_Login"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/log_in" />
-        <item
             android:id="@+id/nav_Logout"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/log_out" />

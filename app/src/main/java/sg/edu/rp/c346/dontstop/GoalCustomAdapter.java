@@ -64,9 +64,9 @@ public class GoalCustomAdapter extends ArrayAdapter {
         //Set goal title
         String type = currentGoal.getGoalType();
         Long targetAmount = currentGoal.getTargetAmount();
-        int currentAmount = currentGoal.getCurrentAmount();
+        Long amountLeft = targetAmount - currentGoal.getCurrentAmount();
         tvTargetAmount.setText(targetAmount + " " + type + " per day");
-        tv.setText(currentAmount + " / " + targetAmount + " Left");
+        tv.setText(amountLeft + " / " + targetAmount + " Left");
 
             return rowView;
 

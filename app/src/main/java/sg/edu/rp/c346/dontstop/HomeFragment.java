@@ -6,9 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -73,9 +70,12 @@ public class HomeFragment extends Fragment{
     private static final String TIME = "Time";
     private static final String FREQUENCY = "Frequency";
     private GoalItem goalItem;
-    private String stepArray;
     private JSONObject jsonObject;
     private JSONArray jsonArray;
+    private double weight, height, currentBMI;
+    private String bmiStatus;
+
+    TextView tvWeight, tvHeight, tvBMI, tvStatus;
 
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -91,6 +91,10 @@ public class HomeFragment extends Fragment{
         lvGoal.setAdapter(gca);
         goalItem = new GoalItem();
 
+        tvWeight = view.findViewById(R.id.tvWeight);
+        tvHeight = view.findViewById(R.id.tvHeight);
+        tvBMI = view.findViewById(R.id.tvBMI);
+        tvStatus = view.findViewById(R.id.tvStatus);
 
         //初始化计步模块
         TodayStepManager.init(getActivity().getApplication());
@@ -107,6 +111,7 @@ public class HomeFragment extends Fragment{
                 try {
                     mStepSum = iSportStepInterface.getCurrentTimeSportStep();
                     try {
+                        Log.d(TAG, "onServiceConnected: " + iSportStepInterface.getTodaySportStepArray());
                         jsonArray = new JSONArray(iSportStepInterface.getTodaySportStepArray());
                         jsonObject = jsonArray.getJSONObject(jsonArray.length() - 1);
                         Log.d(TAG, "onServiceConnected: " + iSportStepInterface.getTodaySportStepArray());
@@ -127,7 +132,7 @@ public class HomeFragment extends Fragment{
             }
         }, Context.BIND_AUTO_CREATE);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+
         if (user != null) {
             String uid = user.getUid();
             DocumentReference myRef = FirebaseFirestore.getInstance().document(uid + "/Goals");
@@ -137,12 +142,15 @@ public class HomeFragment extends Fragment{
                     if (task.isSuccessful()) {
                         DocumentSnapshot documentSnapshot = task.getResult();
                         if (documentSnapshot.exists()) {
+
                             goalItem.setGoalType(documentSnapshot.getString("Type"));
                             goalItem.setTargetAmount((Long) documentSnapshot.get("Amount"));
                             try {
                                 if (jsonObject != null){
                                     goalItem.setCurrentAmount((int)jsonObject.get("stepNum"));
                                     Log.d(TAG, "onComplete: " + (int)jsonObject.get("stepNum"));
+                                }else{
+                                    Log.d(TAG, "onComplete: jsonObject null");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -158,7 +166,42 @@ public class HomeFragment extends Fragment{
                     }
                 }
             });
+
+            DocumentReference profileRef = FirebaseFirestore.getInstance().document(uid + "/Profile");
+            profileRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot.exists()) {
+
+                            weight = Double.parseDouble(documentSnapshot.getString("weight"));
+                            height = Double.parseDouble(documentSnapshot.getString("height"));
+                            double heightInMeter = height/100;
+                            currentBMI = weight/(heightInMeter*heightInMeter);
+                            if (currentBMI < 18.5){
+                                bmiStatus = "Underweight";
+                            }else if (currentBMI < 24.9){
+                                bmiStatus = "Normal Weight";
+                            }else if (currentBMI < 29.9){
+                                bmiStatus = "Overweight";
+                            }else{
+                                bmiStatus = "Obese";
+                            }
+                            tvWeight.setText(String.format("%.2f", weight) + "KG");
+                            tvHeight.setText((int)height + "CM");
+                            tvBMI.setText(String.format("%.2f",currentBMI));
+                            tvStatus.setText(bmiStatus);
+
+                        } else {
+                            Log.d(TAG, "Not exist");
+                        }
+                    }
+                }
+            });
         }
+
+
 
         return view;
     }
@@ -167,6 +210,13 @@ public class HomeFragment extends Fragment{
         @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("dd/MM");
         return format.format(dateInMill);
     }
+
+    private void updateStepCount() {
+        Log.e(TAG, "updateStepCount : " + mStepSum);
+        goalList.get(goalList.size()-1).setCurrentAmount(mStepSum);
+        gca.notifyDataSetChanged();
+    }
+
 
     class TodayStepCounterCall implements Handler.Callback {
 
@@ -184,6 +234,7 @@ public class HomeFragment extends Fragment{
                         }
                         if (mStepSum != step) {
                             mStepSum = step;
+                            updateStepCount();
                         }
                     }
                     mDelayHandler.sendEmptyMessageDelayed(REFRESH_STEP_WHAT, TIME_INTERVAL_REFRESH);

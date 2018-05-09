@@ -16,11 +16,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -47,14 +50,34 @@ public class WelcomeInfoActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance() != null) {
-//            mAuth.addAuthStateListener(mAuthListener);
-            Log.i("LoggedIn", "LoggedIn");
-            startActivity(new Intent(WelcomeInfoActivity.this, HomeActivity.class));
-        } else {
-            startActivity(new Intent(WelcomeInfoActivity.this, SignInActivity.class));
-            Log.i("NotLoggedIn", "NotLoggedIn");
+//        if (FirebaseAuth.getInstance() != null) {
+//            Log.i("LoggedIn", "LoggedIn");
+//            startActivity(new Intent(WelcomeInfoActivity.this, HomeActivity.class));
+//        } else {
+//            startActivity(new Intent(WelcomeInfoActivity.this, SignInActivity.class));
+//            Log.i("NotLoggedIn", "NotLoggedIn");
+//        }
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null){
+            String uid = user.getUid();
+            DocumentReference profileRef = FirebaseFirestore.getInstance().document(uid + "/Profile");
+            profileRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot.exists()) {
+                            Log.d("User Type", "Exist User");
+                            startActivity(new Intent(WelcomeInfoActivity.this, HomeActivity.class));
+                        } else {
+                            Log.d("User Type", "New User");
+                        }
+                    }
+                }
+            });
         }
+
+
     }
 
     @Override

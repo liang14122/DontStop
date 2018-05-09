@@ -28,7 +28,7 @@
         <!--Layout for cardView-->
         <GridLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="6"
             android:alignmentMode="alignMargins"
             android:columnCount="1"
@@ -98,7 +98,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="40dp"
+                        android:layout_marginLeft="36dp"
                         android:layout_marginTop="4dp"
                         android:text="@string/current_weight"
                         android:textColor="#424242"
@@ -111,25 +111,26 @@
                         android:id="@+id/tvHeight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="44dp"
+                        android:layout_marginEnd="72dp"
                         android:layout_marginTop="12dp"
-                        android:text=" Lose 0.73KG"
+                        android:text="73CM"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/ivWeight"
                         tools:ignore="HardcodedText" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="56dp"
                         android:layout_marginTop="4dp"
                         android:text="@string/current_height"
                         android:textColor="#424242"
                         android:textSize="12sp"
                         android:textStyle="normal"
-                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tvHeight"
                         tools:ignore="HardcodedText" />
 
@@ -151,7 +152,7 @@
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:orientation="vertical"
                     tools:ignore="UseCompoundDrawables">
@@ -209,12 +210,12 @@
                         app:layout_constraintTop_toBottomOf="@+id/tvBMI" />
 
                     <TextView
-                        android:id="@+id/tvStandardBMI"
+                        android:id="@+id/tvStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="44dp"
+                        android:layout_marginRight="84dp"
                         android:layout_marginTop="12dp"
-                        android:text="Decrease 0.1"
+                        android:text="Obese"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -225,13 +226,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="64dp"
                         android:layout_marginTop="4dp"
-                        android:text="@string/standard_bmi"
+                        android:text="@string/bmi_status"
                         android:textColor="#424242"
                         android:textSize="12sp"
                         android:textStyle="normal"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStandardBMI"
+                        app:layout_constraintTop_toBottomOf="@+id/tvStatus"
                         tools:ignore="HardcodedText" />
                 </android.support.constraint.ConstraintLayout>
 
