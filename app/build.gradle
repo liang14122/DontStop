@@ -64,25 +64,4 @@ dependencies {
 //"C:\Program Files\Java\jre1.8.0_111\bin\keytool" -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore | "C:\Users\16004118\Downloads\bin/openssl.exe" sha1 -binary | "C:\Users\16004118\Downloads\bin/openssl.exe" base64
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 apply plugin: 'com.google.gms.google-services'

@@ -4,6 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 
 import android.content.Context;
@@ -17,6 +23,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +43,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.today.step.lib.ISportStepInterface;
+import com.today.step.lib.TodayStepManager;
+import com.today.step.lib.TodayStepService;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback
@@ -60,6 +74,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
 
     Marker myCurrent;
 
+    private static String TAG = "HomeFragment";
+
+    private static final int REFRESH_STEP_WHAT = 0;
+
+    //循环取当前时刻的步数中间的间隔时间
+    private long TIME_INTERVAL_REFRESH = 500;
+
+    private Handler mDelayHandler = new Handler(new MapFragment.TodayStepCounterCall());
+    private int mStepSum;
+
+    private ISportStepInterface iSportStepInterface;
+
+    private JSONObject jsonObject;
+    private JSONArray jsonArray;
+
+    private int initStep;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +107,41 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
             onMapReady(mGoogleMap);
         }
 
+        //初始化计步模块
+        TodayStepManager.init(getActivity().getApplication());
+
+
+        //开启计步Service，同时绑定Activity进行aidl通信
+        Intent intent = new Intent(getContext(), TodayStepService.class);
+        getActivity().startService(intent);
+        getActivity().bindService(intent, new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                //Activity和Service通过aidl进行通信
+                iSportStepInterface = ISportStepInterface.Stub.asInterface(service);
+                try {
+                    mStepSum = iSportStepInterface.getCurrentTimeSportStep();
+                    try {
+                        Log.d(TAG, "onServiceConnected: " + iSportStepInterface.getTodaySportStepArray());
+                        jsonArray = new JSONArray(iSportStepInterface.getTodaySportStepArray());
+                        jsonObject = jsonArray.getJSONObject(jsonArray.length() - 1);
+                        Log.d(TAG, "onServiceConnected: " + iSportStepInterface.getTodaySportStepArray());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                mDelayHandler.sendEmptyMessageDelayed(REFRESH_STEP_WHAT, TIME_INTERVAL_REFRESH);
+
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        }, Context.BIND_AUTO_CREATE);
         return mView;
     }
 
@@ -238,6 +304,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
                 if (marker.equals(myCurrent)){
 
                     Intent i = new Intent(getActivity(), RecordingActivity.class);
+                    i.putExtra("initStep", mStepSum);
+                    Log.d(TAG, "onMarkerClick: " + mStepSum);
                     startActivity(i);
                     return true;
                 }
@@ -286,6 +354,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback
         if (isLoaded && mGoogleMap != null) {
             getFragmentManager().beginTransaction().remove(MAP_FRAGMENT).add(R.id.drawer_fragment_container, MAP_FRAGMENT).commit();
             onMapReady(mGoogleMap);
+        }
+    }
+
+    class TodayStepCounterCall implements Handler.Callback {
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case REFRESH_STEP_WHAT: {
+                    //每隔500毫秒获取一次计步数据刷新UI
+                    if (null != iSportStepInterface) {
+                        int step = 0;
+                        try {
+                            step = iSportStepInterface.getCurrentTimeSportStep();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        if (mStepSum != step) {
+                            mStepSum = step;
+                        }
+                    }
+                    mDelayHandler.sendEmptyMessageDelayed(REFRESH_STEP_WHAT, TIME_INTERVAL_REFRESH);
+
+                    break;
+                }
+            }
+            return false;
         }
     }
 }
