@@ -16,6 +16,8 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.today.step.lib.ISportStepInterface;
+import com.today.step.lib.TodayStepService;
 
 import java.util.ArrayList;
 
@@ -57,13 +59,19 @@ public class GoalCustomAdapter extends ArrayAdapter {
 
         GoalItem currentGoal = goalList.get(position);
         TextView tvTargetAmount = rowView.findViewById(R.id.tvTargetAmount);
+        TextView tv = rowView.findViewById(R.id.textView);
 
         //Set goal title
         String type = currentGoal.getGoalType();
-        int targetAmount = currentGoal.getTargetAmount();
+        Long targetAmount = currentGoal.getTargetAmount();
+        int currentAmount = currentGoal.getCurrentAmount();
         tvTargetAmount.setText(targetAmount + " " + type + " per day");
+        tv.setText(currentAmount + " / " + targetAmount + " Left");
 
             return rowView;
 
     }
+
+
+
 }

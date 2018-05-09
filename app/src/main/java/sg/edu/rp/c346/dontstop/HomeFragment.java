@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +34,10 @@ import com.today.step.lib.ISportStepInterface;
 import com.today.step.lib.TodayStepManager;
 import com.today.step.lib.TodayStepService;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -40,7 +45,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements SensorEventListener {
+public class HomeFragment extends Fragment{
 
     private static String TAG = "HomeFragment";
 
@@ -68,6 +73,9 @@ public class HomeFragment extends Fragment implements SensorEventListener {
     private static final String TIME = "Time";
     private static final String FREQUENCY = "Frequency";
     private GoalItem goalItem;
+    private String stepArray;
+    private JSONObject jsonObject;
+    private JSONArray jsonArray;
 
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -81,29 +89,7 @@ public class HomeFragment extends Fragment implements SensorEventListener {
         lvGoal = view.findViewById(R.id.lvGoals);
         gca = new GoalCustomAdapter(getActivity(), R.layout.goal_row, goalList);
         lvGoal.setAdapter(gca);
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String uid = user.getUid();
-            DocumentReference myRef = FirebaseFirestore.getInstance().document(uid + "/Goals");
-            myRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()){
-                        DocumentSnapshot documentSnapshot = task.getResult();
-                        if (documentSnapshot.exists()){
-                            goalItem.setGoalType( documentSnapshot.getString("Type"));
-                            goalItem.setTargetAmount((int)documentSnapshot.get("Amount"));
-                            goalList.add(goalItem);
-                            gca.notifyDataSetChanged();
-                            Log.d(TAG, (String) task.getResult().get("Type"));
-                        }else{
-                            Log.d(TAG, "Not exist");
-                        }
-                    }
-                }
-            });
-        }
+        goalItem = new GoalItem();
 
 
         //初始化计步模块
@@ -120,6 +106,14 @@ public class HomeFragment extends Fragment implements SensorEventListener {
                 iSportStepInterface = ISportStepInterface.Stub.asInterface(service);
                 try {
                     mStepSum = iSportStepInterface.getCurrentTimeSportStep();
+                    try {
+                        jsonArray = new JSONArray(iSportStepInterface.getTodaySportStepArray());
+                        jsonObject = jsonArray.getJSONObject(jsonArray.length() - 1);
+                        Log.d(TAG, "onServiceConnected: " + iSportStepInterface.getTodaySportStepArray());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -133,6 +127,39 @@ public class HomeFragment extends Fragment implements SensorEventListener {
             }
         }, Context.BIND_AUTO_CREATE);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            DocumentReference myRef = FirebaseFirestore.getInstance().document(uid + "/Goals");
+            myRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot.exists()) {
+                            goalItem.setGoalType(documentSnapshot.getString("Type"));
+                            goalItem.setTargetAmount((Long) documentSnapshot.get("Amount"));
+                            try {
+                                if (jsonObject != null){
+                                    goalItem.setCurrentAmount((int)jsonObject.get("stepNum"));
+                                    Log.d(TAG, "onComplete: " + (int)jsonObject.get("stepNum"));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            goalList.add(goalItem);
+                            gca.notifyDataSetChanged();
+
+                            Log.d(TAG, (String) task.getResult().get("Type"));
+                            Log.d(TAG, task.getResult().get("Amount") + "");
+                        } else {
+                            Log.d(TAG, "Not exist");
+                        }
+                    }
+                }
+            });
+        }
+
         return view;
     }
 
@@ -140,53 +167,6 @@ public class HomeFragment extends Fragment implements SensorEventListener {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("dd/MM");
         return format.format(dateInMill);
     }
-
-
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-//        if (recording) {
-//            //upload data to fire base abd ui elements
-//            Toast.makeText(getActivity(), sensorEvent.values[0] + "", Toast.LENGTH_SHORT).show();
-//            if (sensorEvent.values[0] < Integer.MAX_VALUE) {
-//                steps = (int) sensorEvent.values[0];
-//                updateUI();
-//            } else {
-//                Log.i("Amount of sensor", "too big");
-//            }
-//        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
-    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        recording = true;
-//        Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-//        if (countSensor != null) {
-//            sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
-//            Log.i("Find sensor", "Sensor");
-//        } else {
-//            Log.i("Error find sensor", "No such Sensor");
-//        }
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        try {
-//            SensorManager sm = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-//            if (sm != null) {
-//                sm.unregisterListener(this);
-//            }
-//
-//        } catch (Exception e) {
-//            Log.i("Error", Arrays.toString(e.getStackTrace()) + "");
-//        }
-//    }
 
     class TodayStepCounterCall implements Handler.Callback {
 
@@ -214,5 +194,6 @@ public class HomeFragment extends Fragment implements SensorEventListener {
             return false;
         }
     }
+
 
 }

@@ -30,7 +30,8 @@ import com.squareup.picasso.Picasso;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseUser user;
-    FirebaseAuth firebaseAuth;
+    FirebaseAuth mAuth;
+
     ImageView ivProfile;
     TextView tvUserName;
     NavigationView navigationView;
@@ -48,6 +49,7 @@ public class HomeActivity extends AppCompatActivity
         headerView = navigationView.getHeaderView(0);
         tvUserName = headerView.findViewById(R.id.textViewUsername);
         ivProfile = headerView.findViewById(R.id.imageViewProfilePic);
+        mAuth = FirebaseAuth.getInstance();
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -129,7 +131,7 @@ public class HomeActivity extends AppCompatActivity
                 fragment = new MapFragment();
                 break;
             case R.id.nav_Logout:
-                firebaseAuth.signOut();
+                mAuth.signOut();
                 Intent i = new Intent(HomeActivity.this, SignInActivity.class);
                 startActivity(i);
                 break;

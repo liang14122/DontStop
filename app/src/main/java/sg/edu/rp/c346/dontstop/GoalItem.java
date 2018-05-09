@@ -10,11 +10,16 @@ import java.util.Map;
 
 public class GoalItem {
     private String goalType;
-    private int targetAmount;
+    private Long targetAmount;
+    private int currentAmount;
 
-    GoalItem(String goalType, int targetAmount, int currentAmount) {
+    public GoalItem() {
+    }
+
+    public GoalItem(String goalType, Long targetAmount, int currentAmount) {
         this.goalType = goalType;
         this.targetAmount = targetAmount;
+        this.currentAmount = currentAmount;
     }
 
     public String getGoalType() {
@@ -25,12 +30,19 @@ public class GoalItem {
         this.goalType = goalType;
     }
 
-    public int getTargetAmount() {
+    public Long getTargetAmount() {
         return targetAmount;
     }
 
-    public void setTargetAmount(int targetAmount) {
+    public void setTargetAmount(Long targetAmount) {
         this.targetAmount = targetAmount;
     }
 
+    public int getCurrentAmount() {
+        return currentAmount;
+    }
+
+    public void setCurrentAmount(int currentAmount) {
+        this.currentAmount = currentAmount;
+    }
 }
