@@ -51,10 +51,12 @@
     <string name="your_progress_will_be_shown_here_soon">Your progress will be shown here soon</string>
     <string name="ispaused">Don\'t Stop is paused</string>
     <string name="notification_title">Don\'t Stop is counting</string>
-    <string name="your_weight">Your Weight</string>
+    <string name="your_weight">Your Weight, Height</string>
     <string name="your_bmi">Your BMI</string>
     <string name="current_weight">Current Weight</string>
+    <string name="current_height">Current Height</string>
     <string name="current_bmi">Current BMI</string>
+    <string name="standard_bmi">Standard BMI</string>
     <string name="title_activity_new_home">NewHomeActivity</string>
     <string name="home">Home</string>
     <string name="select_your_birthday">Select your Birthday</string>

@@ -1,5 +1,6 @@
 package sg.edu.rp.c346.dontstop;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import com.squareup.picasso.Picasso;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseUser user;
+    FirebaseAuth firebaseAuth;
     ImageView ivProfile;
     TextView tvUserName;
     NavigationView navigationView;
@@ -125,6 +127,11 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_start_running:
                 fragment = new MapFragment();
+                break;
+            case R.id.nav_Logout:
+                firebaseAuth.signOut();
+                Intent i = new Intent(HomeActivity.this, SignInActivity.class);
+                startActivity(i);
                 break;
         }
         if (fragment != null){

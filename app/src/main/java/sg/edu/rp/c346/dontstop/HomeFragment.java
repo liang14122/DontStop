@@ -2,8 +2,6 @@ package sg.edu.rp.c346.dontstop;
 
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.support.v4.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,47 +9,32 @@ import android.content.ServiceConnection;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
-import android.provider.DocumentsContract;
 import android.support.annotation.NonNull;
-import android.support.constraint.solver.Goal;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.today.step.lib.ISportStepInterface;
 import com.today.step.lib.TodayStepManager;
 import com.today.step.lib.TodayStepService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -59,7 +42,7 @@ import java.util.Map;
  */
 public class HomeFragment extends Fragment implements SensorEventListener {
 
-    private static String TAG = "MainActivity";
+    private static String TAG = "HomeFragment";
 
     private static final int REFRESH_STEP_WHAT = 0;
 
@@ -71,7 +54,6 @@ public class HomeFragment extends Fragment implements SensorEventListener {
 
     private ISportStepInterface iSportStepInterface;
 
-    private TextView mStepArrayTextView;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -80,12 +62,12 @@ public class HomeFragment extends Fragment implements SensorEventListener {
     GoalCustomAdapter gca;
     ArrayList<GoalItem> goalList = new ArrayList<>();
     ListView lvGoal;
-    SensorManager sensorManager;
 
     boolean recording = false;
     private static final String STEP = "Steps";
     private static final String TIME = "Time";
     private static final String FREQUENCY = "Frequency";
+    private GoalItem goalItem;
 
     FirebaseFirestore fs = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -96,49 +78,37 @@ public class HomeFragment extends Fragment implements SensorEventListener {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-//        goalList.add(setGoalItem(STEP));
-//        goalList.add(setGoalItem(TIME));
-//        goalList.add(setGoalItem(FREQUENCY))
+        lvGoal = view.findViewById(R.id.lvGoals);
+        gca = new GoalCustomAdapter(getActivity(), R.layout.goal_row, goalList);
+        lvGoal.setAdapter(gca);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String uid = user.getUid();
-            CollectionReference goalRef = fs.collection(uid + "/Goals/Steps");
-            Calendar sevenDaysAgo = Calendar.getInstance();
-            sevenDaysAgo.add(Calendar.DAY_OF_YEAR, -7);
-            final Long dateInMill = sevenDaysAgo.getTimeInMillis();
-            goalRef.whereGreaterThan("DateInMillSecond", dateInMill).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            DocumentReference myRef = FirebaseFirestore.getInstance().document(uid + "/Goals");
+            myRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onSuccess(QuerySnapshot documentSnapshots) {
-                    ArrayList<Map> currentWeek = new ArrayList<>();
-                    for (DocumentSnapshot doc : documentSnapshots){
-                        Map<String, Integer> currentData = new HashMap<>();
-                        int amount = (Integer) doc.get("Amount");
-                        Long dateInMillis = (Long) doc.get("DateInMillSecond");
-                        String date = getDate(dateInMillis);
-                        currentData.put(date, amount);
-                        currentWeek.add(currentData);
-                        Log.i("date", amount + "");
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()){
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (documentSnapshot.exists()){
+                            goalItem.setGoalType( documentSnapshot.getString("Type"));
+                            goalItem.setTargetAmount((int)documentSnapshot.get("Amount"));
+                            goalList.add(goalItem);
+                            gca.notifyDataSetChanged();
+                            Log.d(TAG, (String) task.getResult().get("Type"));
+                        }else{
+                            Log.d(TAG, "Not exist");
+                        }
                     }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                 Log.e("Error", "" + e.getMessage());
                 }
             });
         }
 
 
-        lvGoal = view.findViewById(R.id.lvGoals);
-        gca = new GoalCustomAdapter(getActivity(), R.layout.goal_row, goalList);
-        lvGoal.setAdapter(gca);
-        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-
-
-
         //初始化计步模块
         TodayStepManager.init(getActivity().getApplication());
 
-        mStepArrayTextView = view.findViewById(R.id.stepArrayTextView);
 
         //开启计步Service，同时绑定Activity进行aidl通信
         Intent intent = new Intent(getContext(), TodayStepService.class);
@@ -150,7 +120,6 @@ public class HomeFragment extends Fragment implements SensorEventListener {
                 iSportStepInterface = ISportStepInterface.Stub.asInterface(service);
                 try {
                     mStepSum = iSportStepInterface.getCurrentTimeSportStep();
-                    updateStepCount();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -192,32 +161,32 @@ public class HomeFragment extends Fragment implements SensorEventListener {
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        recording = true;
-        Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if (countSensor != null) {
-            sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
-            Log.i("Find sensor", "Sensor");
-        } else {
-            Log.i("Error find sensor", "No such Sensor");
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        try {
-            SensorManager sm = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-            if (sm != null) {
-                sm.unregisterListener(this);
-            }
-
-        } catch (Exception e) {
-            Log.i("Error", Arrays.toString(e.getStackTrace()) + "");
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        recording = true;
+//        Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+//        if (countSensor != null) {
+//            sensorManager.registerListener(this, countSensor, SensorManager.SENSOR_DELAY_UI);
+//            Log.i("Find sensor", "Sensor");
+//        } else {
+//            Log.i("Error find sensor", "No such Sensor");
+//        }
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        try {
+//            SensorManager sm = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+//            if (sm != null) {
+//                sm.unregisterListener(this);
+//            }
+//
+//        } catch (Exception e) {
+//            Log.i("Error", Arrays.toString(e.getStackTrace()) + "");
+//        }
+//    }
 
     class TodayStepCounterCall implements Handler.Callback {
 
@@ -235,7 +204,6 @@ public class HomeFragment extends Fragment implements SensorEventListener {
                         }
                         if (mStepSum != step) {
                             mStepSum = step;
-//                            updateStepCount();
                         }
                     }
                     mDelayHandler.sendEmptyMessageDelayed(REFRESH_STEP_WHAT, TIME_INTERVAL_REFRESH);
@@ -247,28 +215,4 @@ public class HomeFragment extends Fragment implements SensorEventListener {
         }
     }
 
-    private void updateStepCount() {
-        Log.e(TAG, "updateStepCount : " + mStepSum);
-//        TextView stepTextView = (TextView) findViewById(R.id.stepTextView);
-//        stepTextView.setText(mStepSum + "Step");
-    }
-
-//    public void onClick(View view) {
-//        switch (view.getId()) {
-//            case R.id.stepArrayButton: {
-//                //显示当天计步数据详细，步数对应当前时间
-//                if (null != iSportStepInterface) {
-//                    try {
-//                        String stepArray = iSportStepInterface.getTodaySportStepArray();
-//                        mStepArrayTextView.setText(stepArray);
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                break;
-//            }
-//            default:
-//                break;
-//        }
-//    }
 }

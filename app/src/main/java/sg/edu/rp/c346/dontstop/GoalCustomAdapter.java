@@ -2,6 +2,7 @@ package sg.edu.rp.c346.dontstop;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -58,79 +59,10 @@ public class GoalCustomAdapter extends ArrayAdapter {
         TextView tvTargetAmount = rowView.findViewById(R.id.tvTargetAmount);
 
         //Set goal title
-        String title = currentGoal.getGoalName();
-        tvTargetAmount.setText(title);
+        String type = currentGoal.getGoalType();
+        int targetAmount = currentGoal.getTargetAmount();
+        tvTargetAmount.setText(targetAmount + " " + type + " per day");
 
-        //pir chart
-        PieChart chartMon = rowView.findViewById(R.id.chartToday);
-        chartMon.setUsePercentValues(false);
-        chartMon.getDescription().setEnabled(false);
-        chartMon.setDrawHoleEnabled(true);
-        chartMon.setHoleColor(Color.WHITE);
-        chartMon.setHoleRadius(70f);
-        chartMon.getLegend().setEnabled(false);
-        ArrayList<PieEntry> values = new ArrayList<>();
-        int difference = currentGoal.getTargetAmount() - currentGoal.getCurrentAmount();
-        if (difference > 0) {
-            values.add(new PieEntry(currentGoal.getCurrentAmount()));
-            values.add(new PieEntry(difference));
-        }
-
-        PieDataSet dataSet = new PieDataSet(values, "Demo");
-        dataSet.setSliceSpace(1f);
-        dataSet.setSelectionShift(5f);
-
-        ArrayList<Integer> color = new ArrayList<>();
-        color.add(Color.LTGRAY);
-        color.add(Color.DKGRAY);
-        dataSet.setColors(color);
-
-        PieData data = new PieData(dataSet);
-        data.setDrawValues(false);
-        chartMon.setData(data);
-
-        //Using Array<Map> display
-
-
-
-        //set image for ivs
-        ImageView currentImageView = null;
-        int amountforThatDay;
-        int length = currentGoal.getWeeklyAmount().size();
-        for (int i = 1; i < length+1; i++) {
-            amountforThatDay = (Integer) currentGoal.getWeeklyAmount().get(i).keySet().toArray()[0];
-            switch (i) {
-                case 1:
-                    currentImageView = rowView.findViewById(R.id.ivOne);
-                    break;
-                case 2:
-                    currentImageView = rowView.findViewById(R.id.ivTwo);
-                    break;
-                case 3:
-                    currentImageView = rowView.findViewById(R.id.ivThree);
-                    break;
-                case 4:
-                    currentImageView = rowView.findViewById(R.id.ivFour);
-                    break;
-                case 5:
-                    currentImageView = rowView.findViewById(R.id.ivFive);
-                    break;
-                case 6:
-                    currentImageView = rowView.findViewById(R.id.ivSix);
-                    break;
-                case 7:
-                    currentImageView = rowView.findViewById(R.id.ivSeven);
-                    break;
-            }
-            if (currentImageView != null) {
-                int targetAmount = currentGoal.getTargetAmount();
-                if (amountforThatDay >= targetAmount) {
-                    currentImageView.setImageResource(R.drawable.check);
-                }else if (amountforThatDay < targetAmount){
-                    currentImageView.setImageResource(R.drawable.cross);
-                }
-            }
-        }
             return rowView;
 
     }

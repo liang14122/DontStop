@@ -50,6 +50,7 @@ public class WelcomeInfoActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance() != null) {
 //            mAuth.addAuthStateListener(mAuthListener);
             Log.i("LoggedIn", "LoggedIn");
+            startActivity(new Intent(WelcomeInfoActivity.this, HomeActivity.class));
         } else {
             startActivity(new Intent(WelcomeInfoActivity.this, SignInActivity.class));
             Log.i("NotLoggedIn", "NotLoggedIn");

@@ -24,6 +24,8 @@ public class WelcomeGoalActivity extends AppCompatActivity {
     public static final String STEP = "StepTarget";
     public static final String TIME = "TimeTarget";
     public static final String FREQUENCY = "FrequencyTarget";
+    public static final String TYPE = "Type";
+    public static final String Amount = "Amount";
     public static final int W1 = 10000;
     public static final int H1 = 60;
     public static final int T3 = 3;
@@ -83,15 +85,16 @@ public class WelcomeGoalActivity extends AppCompatActivity {
             String uid = user.getUid();
             DocumentReference myRef = FirebaseFirestore.getInstance().document(uid + "/Goals");
             Map<String, Object> goal = new HashMap<>();
+            goal.put(TYPE, type);
             switch (type) {
                 case STEP:
-                    goal.put(STEP, W1);
+                    goal.put(Amount, W1);
                     break;
                 case TIME:
-                    goal.put(TIME, H1);
+                    goal.put(Amount, H1);
                     break;
                 case FREQUENCY:
-                    goal.put(FREQUENCY, T3);
+                    goal.put(Amount, T3);
                     break;
             }
 
