@@ -37,6 +37,29 @@ public class HomeActivity extends AppCompatActivity
     NavigationView navigationView;
     View headerView;
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        Intent i = getIntent();
+        boolean data = i.getBooleanExtra("data", false);
+        if (data) {
+            Bundle bundle = new Bundle();
+            double distance = i.getDoubleExtra("distance", 0.0);
+            String duration = i.getStringExtra("duration");
+            bundle.putDouble("distance", distance);
+            bundle.putString("duration", duration);
+
+            Fragment frag = new HistoryFragment();
+            frag.setArguments(bundle);
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.addToBackStack(null);
+            ft.replace(R.id.drawer_fragment_container, frag);
+            ft.commit();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +67,7 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         navigationView = findViewById(R.id.nav_view);
         headerView = navigationView.getHeaderView(0);
@@ -79,7 +103,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -115,15 +139,15 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-       displaySelectedFragment(id);
+        displaySelectedFragment(id);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void displaySelectedFragment(int id){
+    private void displaySelectedFragment(int id) {
         Fragment fragment = null;
-        switch (id){
+        switch (id) {
             case R.id.nav_home:
                 fragment = new HomeFragment();
                 break;
@@ -135,8 +159,10 @@ public class HomeActivity extends AppCompatActivity
                 Intent i = new Intent(HomeActivity.this, SignInActivity.class);
                 startActivity(i);
                 break;
+            case R.id.nav_history:
+                fragment = new HistoryFragment();
         }
-        if (fragment != null){
+        if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.drawer_fragment_container, fragment);
             ft.commit();

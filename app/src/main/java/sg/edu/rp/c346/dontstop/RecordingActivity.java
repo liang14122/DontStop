@@ -13,6 +13,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -105,6 +108,33 @@ public class RecordingActivity extends AppCompatActivity implements View.OnClick
 
             }
         }, Context.BIND_AUTO_CREATE);
+
+        btnFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RecordingActivity.this, HomeActivity.class);
+                intent.putExtra("distance", Double.parseDouble(tvDistance.getText().toString()));
+                intent.putExtra("duration", tvTime.getText().toString());
+                intent.putExtra("data",true);
+                startActivity(intent);
+
+//                Bundle bundle = new Bundle();
+//                double distance = Double.parseDouble(tvDistance.getText().toString());
+//                String duration = tvTime.getText().toString();
+//                bundle.putDouble("distance", distance);
+//                bundle.putString("duration", duration);
+//
+//                Fragment frag = new HistoryFragment();
+//                frag.setArguments(bundle);
+//
+//
+//                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                ft.addToBackStack(null);
+//                ft.replace(R.id.drawer_fragment_container, frag);
+//                ft.commit();
+
+            }
+        });
 
     }
 

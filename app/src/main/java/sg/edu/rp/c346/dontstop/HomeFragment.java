@@ -65,7 +65,6 @@ public class HomeFragment extends Fragment{
     ArrayList<GoalItem> goalList = new ArrayList<>();
     ListView lvGoal;
 
-    boolean recording = false;
     private static final String STEP = "Steps";
     private static final String TIME = "Time";
     private static final String FREQUENCY = "Frequency";
@@ -182,7 +181,7 @@ public class HomeFragment extends Fragment{
                             if (currentBMI < 18.5){
                                 bmiStatus = "Underweight";
                             }else if (currentBMI < 24.9){
-                                bmiStatus = "Normal Weight";
+                                bmiStatus = "Normal";
                             }else if (currentBMI < 29.9){
                                 bmiStatus = "Overweight";
                             }else{
