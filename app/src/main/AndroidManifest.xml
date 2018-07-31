@@ -23,7 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SignInActivity">
+        <activity android:name=".Activity.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,20 +51,20 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".WelcomeInfoActivity">
+        <activity android:name=".Activity.WelcomeInfoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
             </intent-filter>
         </activity>
-        <activity android:name=".WelcomeGoalActivity">
+        <activity android:name=".Activity.WelcomeGoalActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomizeGoalActivity">
+        <activity android:name=".Activity.CustomizeGoalActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -72,7 +72,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HomeActivity"
+            android:name=".Activity.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -86,7 +86,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCDfIG3xYcOvvunzQJmD7sULIfU_GQJ4gs" />
 
-        <activity android:name=".RecordingActivity">
+        <activity android:name=".Activity.RecordingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -94,7 +94,7 @@
         </activity>
 
         <receiver
-            android:name=".MyReceiver"
+            android:name=".Receiver.MyReceiver"
             android:enabled="true"
             android:exported="true" />
 
